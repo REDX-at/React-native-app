@@ -1,7 +1,29 @@
-import { StyleSheet, TextInput, View } from "react-native";
-import PrimaryButton from "../component/PrimaryButton";
+import { Alert, StyleSheet, TextInput, View } from "react-native";
+import PrimaryButton from "../component/ui/PrimaryButton";
+import { useState } from "react";
+import Colors from "../constants/color";
 
-export default function StartGameScreen() {
+export default function StartGameScreen({ onPickNumber }) {
+  const [enteredNumber, setEnteredVNumber] = useState("");
+  function numberInputHandler(enteredText) {
+    setEnteredVNumber(enteredText);
+  }
+  function resetInputHandler() {
+    setEnteredVNumber("");
+  }
+  function confirmInputHandler() {
+    const choseNumber = parseInt(enteredNumber);
+    if (isNaN(choseNumber) || choseNumber <= 0 || choseNumber > 99) {
+      Alert.alert(
+        "Invalid Number",
+        "Number Has to be A number between1 and 99",
+        [{ text: "Okay", style: "default", onPress: resetInputHandler }]
+      );
+      return;
+    }
+    console.log("Valid Number");
+    onPickNumber(choseNumber);
+  }
   return (
     <View style={styles.inputContainer}>
       <TextInput
@@ -10,10 +32,12 @@ export default function StartGameScreen() {
         keyboardType="number-pad"
         autoCapitalize="none"
         autoCorrect={false}
+        onChangeText={numberInputHandler}
+        value={enteredNumber}
       />
       <View style={styles.buttonsContainer}>
-        <PrimaryButton>Reset</PrimaryButton>
-        <PrimaryButton>Confirm</PrimaryButton>
+        <PrimaryButton onPress={resetInputHandler}>Reset</PrimaryButton>
+        <PrimaryButton onPress={confirmInputHandler}>Confirm</PrimaryButton>
       </View>
     </View>
   );
@@ -26,7 +50,7 @@ const styles = StyleSheet.create({
     marginTop: 100,
     marginHorizontal: 24,
     borderRadius: 8,
-    backgroundColor: "#4e0329",
+    backgroundColor: Colors.primary800,
     elevation: 4,
     shadowColor: "black",
     shadowOffset: { width: 0, height: 2 },
@@ -35,9 +59,9 @@ const styles = StyleSheet.create({
   numberInput: {
     height: 50,
     fontSize: 32,
-    borderBottomColor: "#ddb52f",
+    borderBottomColor: Colors.accent500,
     borderBottomWidth: 2,
-    color: "#ddb52f",
+    color: Colors.accent500,
     marginVertical: 8,
     fontWeight: "bold",
     textAlign: "center",
